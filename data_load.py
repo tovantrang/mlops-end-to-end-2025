@@ -18,7 +18,7 @@ class DataRetriver:
 if __name__ == "__main__":
     data_retriver = DataRetriver(
                                  api_token=settings.api_token,
-                                 dataset_version=settings.dataset_version_id,
+                                 dataset_version_id=settings.dataset_version_id,
                                  annotations_folder="./annotations",
                                  assets_folder="./assets"
                                  )
