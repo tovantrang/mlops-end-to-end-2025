@@ -6,3 +6,9 @@ dataset/*
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
+dataset/
+annotations/
+assets/
+
+# Ignore dynaconf secret files
+.secrets.*
