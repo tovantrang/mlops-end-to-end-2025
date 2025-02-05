@@ -1,1 +1,6 @@
 dataset/
+annotations/
+assets/
+
+# Ignore dynaconf secret files
+.secrets.*
