@@ -15,3 +15,6 @@ __pycache__/
 
 # Ignore dynaconf secret files
 .secrets.*
+
+# .env file
+.env
