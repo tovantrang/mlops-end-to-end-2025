@@ -10,5 +10,8 @@ dataset/
 annotations/
 assets/
 
+# pycache
+__pycache__/
+
 # Ignore dynaconf secret files
 .secrets.*
