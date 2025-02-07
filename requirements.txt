@@ -1,0 +1,4 @@
+mlflow
+ultralytics
+boto3
+picsellia

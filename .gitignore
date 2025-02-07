@@ -1,6 +1,20 @@
+.venv/
+dataset/*
+!.gitkeep
+
+# pre-commit caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
 dataset/
 annotations/
 assets/
 
+# pycache
+__pycache__/
+
 # Ignore dynaconf secret files
 .secrets.*
+
+# .env file
+.env
