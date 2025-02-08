@@ -4,7 +4,7 @@ import shutil
 
 import yaml
 
-from config import settings
+from src.config.config import settings
 
 
 class DataPreparator:
