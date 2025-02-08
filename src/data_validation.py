@@ -15,7 +15,7 @@ class DataValidator:
         """
         self.annotations_folder = annotations_folder
         self.assets_folder = assets_folder
-        self.max_class_index = self.get_num_classes()
+        self.max_class_index = self.__get_num_classes__()
 
     def validate(self):
         """This function is used to validate the data
@@ -39,9 +39,9 @@ class DataValidator:
                 continue
             image = Image.open(os.path.join(self.assets_folder, image_name))
             annotation_name = image_name.replace(".jpg", ".txt")
-            boxes, labels = self.get_boxes_and_labels(annotation_name)
+            boxes, labels = self.__get_boxes_and_labels__(annotation_name)
             for box in boxes:
-                if not self.box_in_image(box, image):
+                if not self.__box_in_image__(box, image):
                     raise ValueError(
                         f"Box {box} in image {image_name} is out of bounds"
                     )
@@ -52,7 +52,7 @@ class DataValidator:
                     )
         print("Data validation successful")
 
-    def get_boxes_and_labels(
+    def __get_boxes_and_labels__(
         self, annotation_name: str
     ) -> tuple[list[list[float]], list[int]]:
         """This function is used to get the boxes and labels of the image
@@ -73,7 +73,7 @@ class DataValidator:
                 boxes.append([float(x) for x in line[1:]])
             return boxes, labels
 
-    def box_in_image(self, box: list, image: Image) -> bool:
+    def __box_in_image__(self, box: list, image: Image) -> bool:
         """This function is used to check if the box is in the image
 
         Args:
@@ -93,7 +93,7 @@ class DataValidator:
             return False
         return True
 
-    def get_num_classes(self) -> int:
+    def __get_num_classes__(self) -> int:
         """This function is used to get the number of classes
 
         Returns:
