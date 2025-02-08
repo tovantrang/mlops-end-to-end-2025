@@ -3,8 +3,8 @@ import random
 import shutil
 
 import yaml
-
-from src.config.config import settings
+from config import settings
+from tqdm import tqdm
 
 
 class DataPreparator:
@@ -27,9 +27,11 @@ class DataPreparator:
         """
         This function is used to prepare the data
         """
+        print("[INFO] Preparing the dataset...")
         self.__structure_creation__()
         self.__prepare_yaml_file__()
         self.__split_data__()
+        print("[INFO] Dataset preparation complete")
 
     def __structure_creation__(self) -> None:
         """
@@ -84,7 +86,7 @@ class DataPreparator:
         val_images = images[70 * len(images) // 100 : 85 * len(images) // 100]
         test_images = images[85 * len(images) // 100 :]
 
-        for image in train_images:
+        for image in tqdm(train_images, desc="Copying train images"):
             shutil.copy2(
                 os.path.join(self.assets_folder, image),
                 os.path.join(self.dataset_folder, "train", "images", image),
@@ -101,7 +103,7 @@ class DataPreparator:
                 ),
             )
 
-        for image in val_images:
+        for image in tqdm(val_images, desc="Copying val images"):
             shutil.copy2(
                 os.path.join(self.assets_folder, image),
                 os.path.join(self.dataset_folder, "val", "images", image),
@@ -118,7 +120,7 @@ class DataPreparator:
                 ),
             )
 
-        for image in test_images:
+        for image in tqdm(test_images, desc="Copying test images"):
             shutil.copy2(
                 os.path.join(self.assets_folder, image),
                 os.path.join(self.dataset_folder, "test", "images", image),

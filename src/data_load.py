@@ -1,8 +1,9 @@
+import os
 import shutil
 
+from config import settings
 from picsellia import Client
-
-from src.config.config import settings
+from tqdm import tqdm
 
 
 class DataRetriver:
@@ -26,10 +27,23 @@ class DataRetriver:
             annotations_folder (str) : The path where the annotations are stored
             assets_folder (str) : The path where the assets are stored
         """
+        print("[INFO] Downloading annotations...")
         annotation_zip_path = self.dataset_ver.export_annotation_file("YOLO", "./")
         shutil.unpack_archive(annotation_zip_path, annotation_folder)
 
-        self.dataset_ver.download(asset_folder)
+        print("[INFO] Fetching asset list...")
+        assets = list(
+            self.dataset_ver.list_assets()
+        )  # Liste des fichiers à télécharger
+        total_assets = len(assets)
+
+        os.makedirs(asset_folder, exist_ok=True)
+
+        print(f"[INFO] Downloading {total_assets} assets...")
+        for asset in tqdm(assets, desc="Downloading assets", unit="file"):
+            asset.download(asset_folder)
+
+        print("[INFO] Download complete!")
 
 
 if __name__ == "__main__":
