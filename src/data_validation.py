@@ -1,7 +1,9 @@
 import os
 
 import yaml
+from config import settings
 from PIL import Image
+from tqdm import tqdm
 
 
 class DataValidator:
@@ -26,6 +28,7 @@ class DataValidator:
             ValueError: If the box is out of bounds
             ValueError: If the label is out of bounds
         """
+        print("[INFO] Validating the data...")
         if not os.path.exists(self.annotations_folder):
             raise FileNotFoundError(
                 f"Annotations folder not found at {self.annotations_folder}"
@@ -34,7 +37,8 @@ class DataValidator:
         if not os.path.exists(self.assets_folder):
             raise FileNotFoundError(f"Assets folder not found at {self.assets_folder}")
 
-        for image_name in os.listdir(self.assets_folder):
+        images_names = os.listdir(self.assets_folder)
+        for image_name in tqdm(images_names):
             if not image_name.endswith(".jpg"):
                 continue
             image = Image.open(os.path.join(self.assets_folder, image_name))
@@ -50,7 +54,7 @@ class DataValidator:
                     raise ValueError(
                         f"Label {label} in image {image_name} is out of bounds"
                     )
-        print("Data validation successful")
+        print("[INFO] Data validation successful")
 
     def __get_boxes_and_labels__(
         self, annotation_name: str
@@ -106,6 +110,7 @@ class DataValidator:
 
 if __name__ == "__main__":
     data_validator = DataValidator(
-        annotations_folder="./annotations", assets_folder="./assets"
+        annotations_folder=settings.annotation_folder,
+        assets_folder=settings.asset_folder,
     )
     data_validator.validate()
