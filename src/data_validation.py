@@ -1,7 +1,9 @@
 import os
 
 import yaml
+from config import settings
 from PIL import Image
+from tqdm import tqdm
 
 
 class DataValidator:
@@ -34,7 +36,8 @@ class DataValidator:
         if not os.path.exists(self.assets_folder):
             raise FileNotFoundError(f"Assets folder not found at {self.assets_folder}")
 
-        for image_name in os.listdir(self.assets_folder):
+        images_names = os.listdir(self.assets_folder)
+        for image_name in tqdm(images_names):
             if not image_name.endswith(".jpg"):
                 continue
             image = Image.open(os.path.join(self.assets_folder, image_name))
@@ -106,6 +109,7 @@ class DataValidator:
 
 if __name__ == "__main__":
     data_validator = DataValidator(
-        annotations_folder="./annotations", assets_folder="./assets"
+        annotations_folder=settings.annotation_folder,
+        assets_folder=settings.asset_folder,
     )
     data_validator.validate()
