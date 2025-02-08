@@ -28,6 +28,7 @@ class DataValidator:
             ValueError: If the box is out of bounds
             ValueError: If the label is out of bounds
         """
+        print("[INFO] Validating the data...")
         if not os.path.exists(self.annotations_folder):
             raise FileNotFoundError(
                 f"Annotations folder not found at {self.annotations_folder}"
@@ -53,7 +54,7 @@ class DataValidator:
                     raise ValueError(
                         f"Label {label} in image {image_name} is out of bounds"
                     )
-        print("Data validation successful")
+        print("[INFO] Data validation successful")
 
     def __get_boxes_and_labels__(
         self, annotation_name: str
