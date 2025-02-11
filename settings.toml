@@ -2,7 +2,8 @@ annotation_folder = "./annotations"
 asset_folder = "./assets"
 
 model = "yolov10n.pt"
-conf_file = "coco128.yaml"
+model_name = "coco_yolov11n"
+conf_file = "config.yaml"
 run_name = "yolov11n"
 epochs = 2
 device = "0"
