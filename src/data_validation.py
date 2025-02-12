@@ -1,7 +1,9 @@
 import os
 
 import yaml
+from config import settings
 from PIL import Image
+from tqdm import tqdm
 
 
 class DataValidator:
@@ -15,7 +17,7 @@ class DataValidator:
         """
         self.annotations_folder = annotations_folder
         self.assets_folder = assets_folder
-        self.max_class_index = self.get_num_classes()
+        self.max_class_index = self.__get_num_classes__()
 
     def validate(self):
         """This function is used to validate the data
@@ -26,6 +28,7 @@ class DataValidator:
             ValueError: If the box is out of bounds
             ValueError: If the label is out of bounds
         """
+        print("[INFO] Validating the data...")
         if not os.path.exists(self.annotations_folder):
             raise FileNotFoundError(
                 f"Annotations folder not found at {self.annotations_folder}"
@@ -34,14 +37,15 @@ class DataValidator:
         if not os.path.exists(self.assets_folder):
             raise FileNotFoundError(f"Assets folder not found at {self.assets_folder}")
 
-        for image_name in os.listdir(self.assets_folder):
+        images_names = os.listdir(self.assets_folder)
+        for image_name in tqdm(images_names):
             if not image_name.endswith(".jpg"):
                 continue
             image = Image.open(os.path.join(self.assets_folder, image_name))
             annotation_name = image_name.replace(".jpg", ".txt")
-            boxes, labels = self.get_boxes_and_labels(annotation_name)
+            boxes, labels = self.__get_boxes_and_labels__(annotation_name)
             for box in boxes:
-                if not self.box_in_image(box, image):
+                if not self.__box_in_image__(box, image):
                     raise ValueError(
                         f"Box {box} in image {image_name} is out of bounds"
                     )
@@ -50,9 +54,9 @@ class DataValidator:
                     raise ValueError(
                         f"Label {label} in image {image_name} is out of bounds"
                     )
-        print("Data validation successful")
+        print("[INFO] Data validation successful")
 
-    def get_boxes_and_labels(
+    def __get_boxes_and_labels__(
         self, annotation_name: str
     ) -> tuple[list[list[float]], list[int]]:
         """This function is used to get the boxes and labels of the image
@@ -73,7 +77,7 @@ class DataValidator:
                 boxes.append([float(x) for x in line[1:]])
             return boxes, labels
 
-    def box_in_image(self, box: list, image: Image) -> bool:
+    def __box_in_image__(self, box: list, image: Image) -> bool:
         """This function is used to check if the box is in the image
 
         Args:
@@ -93,7 +97,7 @@ class DataValidator:
             return False
         return True
 
-    def get_num_classes(self) -> int:
+    def __get_num_classes__(self) -> int:
         """This function is used to get the number of classes
 
         Returns:
@@ -106,6 +110,7 @@ class DataValidator:
 
 if __name__ == "__main__":
     data_validator = DataValidator(
-        annotations_folder="./annotations", assets_folder="./assets"
+        annotations_folder=settings.annotation_folder,
+        assets_folder=settings.asset_folder,
     )
     data_validator.validate()
