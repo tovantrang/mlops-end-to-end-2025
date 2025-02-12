@@ -51,6 +51,8 @@ class Trainer:
         )
 
         client = MlflowClient()
+        alias = "test"
+        '''
         champion_runs = client.search_runs(tag="Champion")
         if champion_runs == []:
             alias = "Champion"
@@ -59,6 +61,7 @@ class Trainer:
                 alias = "Challenger"
             else:
                 alias = "failure?"
+        '''
         client.set_registered_model_alias(
             name=model_name,
             alias=alias,
