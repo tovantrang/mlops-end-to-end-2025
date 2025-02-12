@@ -1,0 +1,3 @@
+annotation_folder = "./annotations"
+asset_folder = "./assets"
+dataset_folder = "./dataset"
