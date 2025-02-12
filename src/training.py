@@ -14,7 +14,7 @@ class Trainer:
         """
         self.model = YOLO(model)
 
-    def train(self, conf_file : str, run_name : str, epochs : int =2, device : str ="0", save_dir : str ="./", 
+    def train(self, conf_file : str, run_name : str,
               mlflow_local_path : str ="requirements.txt", mlflow_artifact_path : str ="environment"):
         """
         This function is used to train the model
@@ -29,7 +29,7 @@ class Trainer:
             mlflow_artifact_path : 
         """
         with mlflow.start_run(run_name=run_name, log_system_metrics=True) as run:
-            self.model.train(data=conf_file, epochs=epochs, device=device, save_dir=save_dir)
+            self.model.train(data=conf_file)
             mlflow.log_artifact(
                 local_path=mlflow_local_path,
                 artifact_path=mlflow_artifact_path,
@@ -71,9 +71,6 @@ if __name__ == "__main__":
 
     trainer.train(conf_file=settings.conf_file, 
                   run_name=settings.run_name, 
-                  epochs=settings.epochs,
-                  device=settings.device,
-                  save_dir=settings.save_dir,
                   mlflow_local_path=settings.mlflow_local_path,
                   mlflow_artifact_path=settings.mlflow_artifact_path)
     trainer.register(model_name=settings.model_name)
