@@ -2,3 +2,4 @@ mlflow
 ultralytics
 boto3
 picsellia
+pynvml # pour metrics GPU
