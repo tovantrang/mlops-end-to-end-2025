@@ -5,13 +5,14 @@ from ultralytics import YOLO
 
 
 class Trainer:
-    def __init__(self) -> None:
+    def __init__(self, model: str) -> None:
         """
         This class is used to train the model and save it
 
         Args:
+            model : string representing to model to load
         """
-        self.model = YOLO()
+        self.model = YOLO(model)
 
     def train(
         self,
@@ -83,7 +84,7 @@ class Trainer:
 
 
 if __name__ == "__main__":
-    trainer = Trainer()
+    trainer = Trainer(model=settings.model)
 
     trainer.train(
         conf_file=settings.conf_file,
