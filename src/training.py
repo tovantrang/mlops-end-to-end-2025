@@ -35,7 +35,7 @@ class Trainer:
         """
         with mlflow.start_run(run_name=run_name, log_system_metrics=True) as run:
             self.model.train(cfg=conf_file)
-            self.metrics = self.model.val()
+            self.metrics = self.model.val(split="test")
 
             mlflow.log_artifact(
                 local_path=mlflow_local_path,
