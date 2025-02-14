@@ -5,14 +5,13 @@ from ultralytics import YOLO
 
 
 class Trainer:
-    def __init__(self, model: str) -> None:
+    def __init__(self) -> None:
         """
         This class is used to train the model and save it
 
         Args:
-            model : name of the YOLO pre-train file to use
         """
-        self.model = YOLO(model)
+        self.model = YOLO()
 
     def train(
         self,
@@ -35,11 +34,14 @@ class Trainer:
         """
         with mlflow.start_run(run_name=run_name, log_system_metrics=True) as run:
             self.model.train(cfg=conf_file)
+            self.metrics = self.model.val()
+
             mlflow.log_artifact(
                 local_path=mlflow_local_path,
                 artifact_path=mlflow_artifact_path,
                 run_id=run.info.run_id,
             )
+            mlflow.log_metric("map", self.metrics.box.map, run_id=run.info.run_id)
 
     def register(self, model_name: str) -> None:
         """
@@ -56,26 +58,32 @@ class Trainer:
         )
 
         client = MlflowClient()
-        alias = "test"
-        """
-        champion_runs = client.search_runs(tag="Champion")
-        if champion_runs == []:
+
+        champion_models = client.search_registered_models(
+            filter_string="'Champion' IN aliases"
+        )
+        if champion_models == []:
             alias = "Champion"
         else:
-            if champion_runs[0].loss < mlflow.last_active_run().loss:
+            champion_run = champion_models[0].aliases["Champion"].run_id
+            if (
+                client.get_metric_history(champion_run.info.run_id, "map")[-1]
+                < self.metrics.box.map
+            ):
                 alias = "Challenger"
             else:
                 alias = "failure?"
-        """
-        client.set_registered_model_alias(
-            name=model_name,
-            alias=alias,
-            version=model_version.version,
-        )
+
+        if alias != "failure?":
+            client.set_registered_model_alias(
+                name=model_name,
+                alias=alias,
+                version=model_version.version,
+            )
 
 
 if __name__ == "__main__":
-    trainer = Trainer(settings.model)
+    trainer = Trainer()
 
     trainer.train(
         conf_file=settings.conf_file,
