@@ -1,29 +1,28 @@
+from config import settings
 from mlflow import MlflowClient
 from ultralytics import YOLO
 
 
 class Inference:
-    def __init__(self):
+    def __init__(self, model_name: str) -> None:
         """
         This class is used to create inferences
 
         Args:
+            model_name : name of the model to use for the inference
         """
         self.client = MlflowClient()
 
-        champion_models = self.client.search_registered_models(
-            filter_string="'Champion' IN aliases"
-        )
-
-        if champion_models == []:
+        registered_models = self.client.search_registered_models()
+        aliases = [res.aliases for res in registered_models][0]
+        if "Champion" not in aliases:
             print("no available model for inference")
             return
 
-        model_name = champion_models[-1].name
-        model_version = champion_models[-1].aliases["Champion"].version
+        champion_id = aliases["Champion"]
 
         download_uri = (
-            self.client.get_model_version_download_uri(model_name, model_version)
+            self.client.get_model_version_download_uri(model_name, champion_id)
             + "/weights/best.pt"
         )
 
@@ -55,6 +54,6 @@ class Inference:
 
 
 if __name__ == "__main__":
-    inf = Inference()
+    inf = Inference(model_name=settings.model_name)
 
     inf.infer(type="IMAGE", path="../assets/20250108_151716.jpg")
