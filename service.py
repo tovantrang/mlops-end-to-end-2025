@@ -1,3 +1,4 @@
+import json
 import os
 
 import bentoml
@@ -20,7 +21,8 @@ mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)  # pour avoir mlflow
 @bentoml.service(resources={"gpu": 1})
 class YOLOService:
     def __init__(self) -> None:
-        pass
+        self.client = mlflow.tracking.MlflowClient()
+        self.model = YOLO(self.__get_champion_uri__())
 
     def __get_champion_uri__(self) -> str:
         """This function is used to get the champion model URI from the MLFlow server
@@ -28,90 +30,28 @@ class YOLOService:
         Returns:
             str: the champion model URI
         """
-        return "pass"
+        champion_models = self.client.search_registered_models(
+            filter_string="'Champion' IN aliases"
+        )
 
-    def __get_champion_model__(self) -> YOLO:
-        """This function is used to get the champion modelfrom the MLFlow server
+        model_name = champion_models[-1].name
+        model_version = champion_models[-1].aliases["Champion"].version
 
-        Returns:
-            YOLO: the champion model
-        """
-        model = YOLO(self.__get_champion_uri__())
-        return model
+        download_uri = (
+            self.client.get_model_version_download_uri(model_name, model_version)
+            + "/weights/best.pt"
+        )
+        return download_uri
 
     @bentoml.api
-    def predict_image(self, image: np.ndarray) -> list[list[dict]]:
+    def predict_image(self, image: np.ndarray) -> list[dict]:
         """This function is used to predict the image
 
         Args:
             image : image to predict
 
         Returns:
-            np.ndarray: the image with the prediction
+            list[dict]: the prediction
         """
-        model = self.__get_champion_model__()
-        result = model.predict(image)
-        return result
-
-    @bentoml.api(batchable=True)
-    def predict_video(self, video: list[np.ndarray]) -> list[list[dict]]:
-        """This function is used to predict the video
-
-        Args:
-            video : video to predict
-
-        Returns:
-            np.ndarray: the video with the prediction
-        """
-        return [[{"pass": "pass"}]]
-
-    @bentoml.api
-    def predict_webcam(self) -> list[list[dict]]:
-        """This function is used to predict the webcam
-
-        Returns:
-            np.ndarray: the webcam with the prediction
-        """
-        return [[{"pass": "pass"}]]
-
-    @bentoml.api
-    def render_image(
-        self, image: np.ndarray, prediction: list[list[dict]]
-    ) -> np.ndarray:
-        """This function is used to render the image
-
-        Args:
-            image : image to render
-            prediction : prediction to render
-
-        Returns:
-            np.ndarray: the image with the prediction
-        """
-        return [[{"pass": "pass"}]]
-
-    @bentoml.api
-    def render_video(
-        self, video: list[np.ndarray], prediction: list[list[dict]]
-    ) -> np.ndarray:
-        """This function is used to render the video
-
-        Args:
-            video : video to render
-            prediction : prediction to render
-
-        Returns:
-            np.ndarray: the video with the prediction
-        """
-        return np.ndarray()
-
-    @bentoml.api
-    def render_webcam(self, prediction: list[list[dict]]) -> np.ndarray:
-        """This function is used to render the webcam
-
-        Args:
-            prediction : prediction to render
-
-        Returns:
-            np.ndarray: the webcam with the prediction
-        """
-        return np.ndarray()
+        result = self.model.predict(image)
+        return json.loads(result.tojson())
