@@ -42,7 +42,7 @@ class Trainer:
                 artifact_path=mlflow_artifact_path,
                 run_id=run.info.run_id,
             )
-            mlflow.log_metric("map", self.metrics.box.map, run_id=run.info.run_id)
+            mlflow.log_metric("test_map", self.metrics.box.map, run_id=run.info.run_id)
 
     def register(self, model_name: str) -> None:
         """
@@ -60,20 +60,29 @@ class Trainer:
 
         client = MlflowClient()
 
-        champion_models = client.search_registered_models(
-            filter_string="'Champion' IN aliases"
-        )
-        if champion_models == []:
+        registered_models = client.search_registered_models()
+        aliases = [res.aliases for res in registered_models][0]
+        if "Champion" not in aliases:
             alias = "Champion"
+            print("New Champion!")
         else:
-            champion_run = champion_models[0].aliases["Champion"].run_id
-            if (
-                client.get_metric_history(champion_run.info.run_id, "map")[-1]
-                < self.metrics.box.map
-            ):
+            champion_id = aliases["Champion"]
+            model_versions = client.search_model_versions(f"name='{model_name}'")
+            version_to_run_id = {
+                model_version.version: model_version.run_id
+                for model_version in model_versions
+            }
+            champion_run_id = version_to_run_id[champion_id]
+            champion_map = client.get_metric_history(champion_run_id, "test_map")[
+                0
+            ].value
+            print(f"Champion map: {champion_map}, New map: {self.metrics.box.map}")
+            if champion_map < self.metrics.box.map:
                 alias = "Challenger"
+                print("New Challenger!")
             else:
                 alias = "failure?"
+                print("Failed to beat the champion")
 
         if alias != "failure?":
             client.set_registered_model_alias(
