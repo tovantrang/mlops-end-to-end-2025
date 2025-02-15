@@ -1,3 +1,4 @@
+import mlflow
 from config import settings
 from mlflow import MlflowClient
 from ultralytics import YOLO
@@ -21,12 +22,14 @@ class Inference:
 
         champion_id = aliases["Champion"]
 
-        download_uri = (
-            self.client.get_model_version_download_uri(model_name, champion_id)
-            + "/weights/best.pt"
+        download_uri = self.client.get_model_version_download_uri(
+            model_name, champion_id
         )
-
-        self.model = YOLO(download_uri)
+        local_path = mlflow.artifacts.download_artifacts(
+            artifact_uri=download_uri, dst_path="."
+        )
+        print(local_path)
+        self.model = YOLO("best.pt")
 
     def infer(self, type: str, path: str = ""):
         """
@@ -46,14 +49,14 @@ class Inference:
             stream = False
 
         if type == "WEBCAM":
-            results = self.model(0, stream=stream)
+            results = self.model.predict(0, stream=stream)
         else:
-            results = self.model(path, stream=stream)
-
+            results = self.model.predict(path, stream=stream)
+        results[0].show()
         return results
 
 
 if __name__ == "__main__":
     inf = Inference(model_name=settings.model_name)
 
-    inf.infer(type="IMAGE", path="../assets/20250108_151716.jpg")
+    inf.infer(type="IMAGE", path="test.jpg")
