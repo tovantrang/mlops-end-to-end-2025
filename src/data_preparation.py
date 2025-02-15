@@ -82,9 +82,9 @@ class DataPreparator:
         random.seed(42)
         random.shuffle(images)
 
-        train_images = images[: 70 * len(images) // 100]
-        val_images = images[70 * len(images) // 100 : 85 * len(images) // 100]
-        test_images = images[85 * len(images) // 100 :]
+        train_images = images[: 60 * len(images) // 100]
+        val_images = images[60 * len(images) // 100 : 80 * len(images) // 100]
+        test_images = images[80 * len(images) // 100 :]
 
         for image in tqdm(train_images, desc="Copying train images"):
             shutil.copy2(
