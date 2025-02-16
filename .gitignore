@@ -1,6 +1,7 @@
 .venv/
 dataset/*
 !.gitkeep
+.vscode/
 
 # pre-commit caches
 .mypy_cache/
@@ -18,6 +19,7 @@ __pycache__/
 
 # .env file
 .env
+.env.local
 
 # entrainements
 runs/
