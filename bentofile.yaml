@@ -11,12 +11,6 @@ python:
   - opencv-python
   - mlflow
 
-env:
-- "MLFLOW_TRACKING_URI={{settings.MLFLOW_TRACKING_URI}}"
-- "MLFLOW_DEFAULT_ARTIFACT_ROOT={{settings.MLFLOW_DEFAULT_ARTIFACT_ROOT}}"
-- "AWS_ACCESS_KEY_ID={{settings.AWS_ACCESS_KEY_ID}}"
-- "AWS_SECRET_ACCESS_KEY={{settings.AWS_SECRET_ACCESS_KEY}}"
-
 docker:
   system_packages:
   - libgl1-mesa-glx
