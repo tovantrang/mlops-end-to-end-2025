@@ -104,7 +104,12 @@ python test/test_api.py
 ```
 
 ---
-
+## Problèmes rencontrés
+Nous n'avons pas réussi à déployer le modèle avec BentoML sur le cloud car le déploiement ne se terminait pas (même après plus d'une heure). Par contre le déploiement en local fonctionne parfaitement.
+```bash
+bentoml serve .
+```
+---
 ## 👥 Auteurs
 - **Thomas Perreuil** - Télécom physique Strasbourg
 - **Nicolas To Van Trang** - Télécom physique Strasbourg
