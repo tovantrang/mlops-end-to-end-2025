@@ -1,57 +1,32 @@
-import json
-import os
-
 import bentoml
-import mlflow
-import numpy as np
-from dynaconf import settings
+from PIL import Image
 from ultralytics import YOLO
 
-# env
-os.environ["MLFLOW_TRACKING_URI"] = settings.MLFLOW_TRACKING_URI
-os.environ["MLFLOW_DEFAULT_ARTIFACT_ROOT"] = settings.MLFLOW_DEFAULT_ARTIFACT_ROOT
-os.environ["AWS_ACCESS_KEY_ID"] = settings.AWS_ACCESS_KEY_ID
-os.environ["AWS_SECRET_ACCESS_KEY"] = settings.AWS_SECRET_ACCESS_KEY
-os.environ["AWS_DEFAULT_REGION"] = settings.AWS_DEFAULT_REGION
 
-
-mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)  # pour avoir mlflow
-
-
-@bentoml.service(resources={"gpu": 1})
+@bentoml.service()
 class YOLOService:
     def __init__(self) -> None:
-        self.client = mlflow.tracking.MlflowClient()
-        self.model = YOLO(self.__get_champion_uri__())
-
-    def __get_champion_uri__(self) -> str:
-        """This function is used to get the champion model URI from the MLFlow server
-
-        Returns:
-            str: the champion model URI
-        """
-        champion_models = self.client.search_registered_models(
-            filter_string="'Champion' IN aliases"
-        )
-
-        model_name = champion_models[-1].name
-        model_version = champion_models[-1].aliases["Champion"].version
-
-        download_uri = (
-            self.client.get_model_version_download_uri(model_name, model_version)
-            + "/weights/best.pt"
-        )
-        return download_uri
+        self.model = YOLO("best.pt")
 
     @bentoml.api
-    def predict_image(self, image: np.ndarray) -> list[dict]:
-        """This function is used to predict the image
+    async def predict(self, image: Image.Image) -> dict:
+        """Predicts the class of the input image
 
         Args:
-            image : image to predict
+            image (Image.Image): _description_
 
         Returns:
-            list[dict]: the prediction
+            dict: _description_
         """
-        result = self.model.predict(image)
-        return json.loads(result.tojson())
+        results = self.model(image)
+        result = results[0]
+
+        class_names = self.model.model.names
+
+        boxes = []
+        for box in result.boxes:
+            boxes.append(
+                {"xyxy": box.xyxy[0].tolist(), "class": class_names[int(box.cls[0])]}
+            )
+
+        return {"boxes": boxes, "inference_time": float(result.speed["inference"])}
