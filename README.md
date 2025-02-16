@@ -73,7 +73,6 @@ Il y a 3 fichiers de configuration à créer :
 - Basé sur le fichier `src/config/.secrets.toml.Template`
     - `src/config/.secrets.toml` contenant les secrets pour picsellia
  
-L'entrainement peut être paramétré à partir du fichier `src/config/config.yaml`
 D'autres éléments (tels que les chemins pour les différents dossiers servant à stocker les données) peuvent être modifié dans le fichier `src/config/settings.toml`
 
 ### 2️⃣ Exécuter la pipeline d'entraînement du modèle
