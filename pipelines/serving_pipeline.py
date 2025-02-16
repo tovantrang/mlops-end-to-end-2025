@@ -1,6 +1,7 @@
 import subprocess
 
 import bentoml
+from dotenv import load_dotenv
 
 
 BENTO_NAME = "YOLOservice"
@@ -21,6 +22,7 @@ def run_command(command: str):
 
 
 if __name__ == "__main__":
+    load_dotenv("src/config/.env")
     run_command("python src/download_champion.py")
     run_command("bentoml cloud login")
 

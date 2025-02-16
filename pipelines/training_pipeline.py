@@ -1,6 +1,9 @@
 import subprocess
 
+from dotenv import load_dotenv
+
 if __name__ == "__main__":
+    load_dotenv("src/config/.env")
     scripts = ["pipelines/data_pipeline.py", "src/training.py"]
 
     print("Démarrage du pipeline training...")

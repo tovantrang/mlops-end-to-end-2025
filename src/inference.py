@@ -1,5 +1,7 @@
+import click
 import mlflow
 from config import settings
+from dotenv import load_dotenv
 from mlflow import MlflowClient
 from ultralytics import YOLO
 
@@ -56,7 +58,17 @@ class Inference:
         return results
 
 
-if __name__ == "__main__":
+@click.command()
+@click.option(
+    "--type", default="IMAGE", help="Type of the inference    (IMAGE, VIDEO, WEBCAM)"
+)
+@click.option("--input", default="test/test.jpg", help="Path of the input")
+def main(type, input):
+    load_dotenv("src/config/.local_env")
     inf = Inference(model_name=settings.model_name)
 
-    inf.infer(type="IMAGE", path="test.jpg")
+    inf.infer(type=type, path=input)
+
+
+if __name__ == "__main__":
+    main()
