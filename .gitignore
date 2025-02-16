@@ -19,8 +19,6 @@ __pycache__/
 # .env file
 .env
 
-.vscode/
-
 # entrainements
 runs/
 *.pt

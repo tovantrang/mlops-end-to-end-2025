@@ -77,7 +77,7 @@ class Trainer:
                 0
             ].value
             print(f"Champion map: {champion_map}, New map: {self.metrics.box.map}")
-            if champion_map < self.metrics.box.map:
+            if champion_map <= self.metrics.box.map:
                 alias = "Challenger"
                 print("New Challenger!")
             else:
