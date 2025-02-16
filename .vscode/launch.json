@@ -1,0 +1,65 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Start data_pipeline.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/pipelines/data_pipeline.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/src/config/.env",
+            "env": {
+                "MLFLOW_S3_ENDPOINT_URL": "http://localhost:9000"
+            }
+        },
+        {
+            "name": "Python: Start training.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/training.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/src/config/.env",
+            "env": {
+                "MLFLOW_S3_ENDPOINT_URL": "http://localhost:9000"
+            }
+        }
+        ,{
+            "name": "Python: Start serving_pipeline.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/pipelines/serving_pipeline.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/src/config/.env",
+            "env": {
+                "MLFLOW_S3_ENDPOINT_URL": "http://localhost:9000"
+            }
+        }
+        ,{
+            "name": "Python: Start inference.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/inference.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/src/config/.env",
+            "env": {
+                "MLFLOW_S3_ENDPOINT_URL": "http://localhost:9000"
+            }
+        }
+        ,{
+            "name": "Python: Start training_pipeline.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/pipelines/training_pipeline.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/src/config/.env",
+            "env": {
+                "MLFLOW_S3_ENDPOINT_URL": "http://localhost:9000"
+            }
+        }
+    ]
+}
