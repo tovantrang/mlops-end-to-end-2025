@@ -46,23 +46,26 @@ class Inference:
             print("unreconised inference mode, must be IMAGE, VIDEO or WEBCAM")
             return
 
-        if mode != "IMAGE":
-            stream = True
-        else:
-            stream = False
+        if mode == "IMAGE":
+            results = self.model.predict(path)
+            results.show()
 
         if mode == "WEBCAM":
-            results = self.model.predict(0, stream=stream)
+            results = self.model.predict(0, stream=True)
             for result in results:
-                im_rgb = result.plot()  # Récupère l'image annotée
-                cv2.imshow("YOLO Detection", im_rgb)  # Affiche dans la même fenêtre
-                if cv2.waitKey(1) & 0xFF == ord("q"):  # Quitter avec 'q'
+                im_rgb = result.plot()
+                cv2.imshow("YOLO Detection", im_rgb)
+                if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
             cv2.destroyAllWindows()
 
         else:
-            results = self.model.predict(path, stream=stream)
-            results[0].show()
+            results = self.model.predict(path, stream=True)
+            for result in results:
+                im_rgb = result.plot()
+                cv2.imshow("YOLO Detection", im_rgb)
+            cv2.waitKey()
+            cv2.destroyAllWindows()
         return results
 
 
