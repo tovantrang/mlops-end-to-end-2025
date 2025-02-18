@@ -29,7 +29,7 @@ mixup: 0.0
 copy_paste: 0.0
 
 batch: 4
-epochs: 300
+epochs: 1
 data: "dataset/data.yaml"
 patience: 50
 seed: 42
