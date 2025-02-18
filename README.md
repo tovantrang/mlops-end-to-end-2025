@@ -72,7 +72,7 @@ Il y a 3 fichiers de configuration à créer :
 
 - Basé sur le fichier `src/config/.secrets.toml.Template`
     - `src/config/.secrets.toml` contenant les secrets pour picsellia
- 
+
 D'autres éléments (tels que les chemins pour les différents dossiers servant à stocker les données) peuvent être modifié dans le fichier `src/config/settings.toml`
 
 ### 2️⃣ Exécuter la pipeline d'entraînement du modèle
@@ -94,6 +94,8 @@ python src/inference.py  --mode VIDEO --input path/to/video.mp4
 ```bash
 python src/inference.py  --mode WEBCAM
 ```
+
+Utiliser la touche `q` pour quitter la fenêtre de la webcam.
 
 ### 6️⃣ Déployer le modèle avec BentoML
 ```bash
