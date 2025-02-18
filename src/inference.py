@@ -1,4 +1,5 @@
 import click
+import cv2
 import mlflow
 from config import settings
 from dotenv import load_dotenv
@@ -33,41 +34,48 @@ class Inference:
         print(local_path)
         self.model = YOLO("best.pt")
 
-    def infer(self, type: str, path: str = ""):
+    def infer(self, mode: str, path: str = ""):
         """
         This function is used to train the model
 
         Args:
-            type : string used to select the inference mode (IMAGE, VIDEO or WEBCAM)
+            mode : string used to select the inference mode (IMAGE, VIDEO or WEBCAM)
             path : in the case of a IMAGE or VIDEO inference, the path to the obect to use for the inference
         """
-        if type not in ["IMAGE", "VIDEO", "WEBCAM"]:
-            print("unreconised inference type, must be IMAGE, VIDEO or WEBCAM")
+        if mode not in ["IMAGE", "VIDEO", "WEBCAM"]:
+            print("unreconised inference mode, must be IMAGE, VIDEO or WEBCAM")
             return
 
-        if type != "IMAGE":
+        if mode != "IMAGE":
             stream = True
         else:
             stream = False
 
-        if type == "WEBCAM":
+        if mode == "WEBCAM":
             results = self.model.predict(0, stream=stream)
+            for result in results:
+                im_rgb = result.plot()  # Récupère l'image annotée
+                cv2.imshow("YOLO Detection", im_rgb)  # Affiche dans la même fenêtre
+                if cv2.waitKey(1) & 0xFF == ord("q"):  # Quitter avec 'q'
+                    break
+            cv2.destroyAllWindows()
+
         else:
             results = self.model.predict(path, stream=stream)
-        results[0].show()
+            results[0].show()
         return results
 
 
 @click.command()
 @click.option(
-    "--type", default="IMAGE", help="Type of the inference    (IMAGE, VIDEO, WEBCAM)"
+    "--mode", default="IMAGE", help="mode of the inference    (IMAGE, VIDEO, WEBCAM)"
 )
 @click.option("--input", default="test/test.jpg", help="Path of the input")
-def main(type, input):
-    load_dotenv("src/config/.local_env")
+def main(mode, input):
+    load_dotenv("src/config/.local.env")
     inf = Inference(model_name=settings.model_name)
 
-    inf.infer(type=type, path=input)
+    inf.infer(mode=mode, path=input)
 
 
 if __name__ == "__main__":
