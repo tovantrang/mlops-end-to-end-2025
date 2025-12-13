@@ -66,7 +66,7 @@ pip install -r requirements.txt
 ```
 Il y a 3 fichiers de configuration à créer :
 
-- Basés sur les fichiers `src/config/.env.Template`
+- Basés sur les fichiers `src/config/.env.Template` et `src/config/.local.env.Template`
     - `src/config/.env` contenant les variables d'environnement pour docker-compose.
     - `src/config/.local.env` contenant les variables d'environnement pour le code en local
 
